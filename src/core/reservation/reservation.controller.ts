@@ -1,12 +1,13 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ParseIntPipe } from '@nestjs/common';
 import { ReservationService } from './reservation.service';
 import { CreateReservationDto, UpdateReservationDto } from '../../shared/dto/reservation.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guard/jwt.auth.guard';
 import { PayloadUserInterface } from 'src/shared/payload/payload.user.interface';
 import { User } from 'src/auth/user/user.decorators';
 
 @ApiTags('Reservation')
+@ApiBearerAuth()
 @Controller('reservation')
 export class ReservationController {
   constructor(private readonly reservationService: ReservationService) { }
@@ -31,18 +32,26 @@ export class ReservationController {
   ) {
     return this.reservationService.findByOwnerRoom(id);
   }
+  @Get('byId/:id')
+  findById(
+    @Param('id', ParseIntPipe) id: number
+  ) {
+    return this.reservationService.findById(id);
+  }
 
   @Get(':id')
   findByUserId(@Param('id', ParseIntPipe) id: number) {
-    return this.reservationService.findByUserId(+id);
+    return this.reservationService.findByUserId(id);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Patch(':id')
   update(
-    @Param('id') id: string,
-    @Body() updateReservationDto: UpdateReservationDto
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateReservationDto: UpdateReservationDto,
+    @User() user: PayloadUserInterface
   ) {
-    return this.reservationService.update(+id, updateReservationDto);
+    return this.reservationService.update(id, updateReservationDto);
   }
 
   @Delete(':id')

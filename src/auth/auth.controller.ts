@@ -1,7 +1,10 @@
 import {
   Body,
+  Get,
   HttpCode,
   HttpStatus,
+  Param,
+  ParseIntPipe,
   Request,
   UseGuards,
 } from '@nestjs/common';
@@ -12,6 +15,7 @@ import { Tokens } from './types';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { authDTO, authUserDTO } from 'src/shared/dto/auth.dto';
 import { CreateUserDto } from 'src/shared/dto/user.dto';
+import { PrivilegesEnum } from 'src/shared/enums/privilege.enum';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -29,6 +33,16 @@ export class AuthController {
   async signUp(@Body() signupDTO: CreateUserDto) {
     return this.authservice.signUp(signupDTO);
   }
+
+  @Get('/findUserByPrivilege/:type')
+  async findAllUserByPrivilege(
+    @Param('type') type: PrivilegesEnum
+  ) {
+    return this.authservice.findAllUserByPrivilege(type);
+  }
+
+
+
 
   @UseGuards(AuthGuard('jwt'))
   @Post('logout')

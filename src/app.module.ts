@@ -9,6 +9,7 @@ import { RepositoryModule } from './core/repository/repository.module';
 import { RoomsModule } from './core/rooms/rooms.module';
 import { TarifModule } from './core/tarif/tarif.module';
 import { PaiementModule } from './core/paiement/paiement.module';
+import { ServicesModule } from './core/services/services.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { PaiementModule } from './core/paiement/paiement.module';
     RoomsModule,
     TarifModule,
     PaiementModule,
+    ServicesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

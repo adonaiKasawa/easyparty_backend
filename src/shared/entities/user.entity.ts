@@ -12,6 +12,7 @@ import { TimesTampInterface } from './timesTamp';
 import { RoomEntity } from './room.entity';
 import { TarifEntity } from './tarif.entity';
 import { ReservationEntity } from './reservation.entity';
+import { ServiceEntity } from './service.entity';
 
 @Entity('users')
 export class UserEntity extends TimesTampInterface {
@@ -93,47 +94,14 @@ export class UserEntity extends TimesTampInterface {
   )
   reservation: ReservationEntity[];
 
-  // @OneToMany(
-  //   (type) => CommentaireEntity,
-  //   (CommentaireEntity) => CommentaireEntity.users,
-  //   {
-  //     cascade: ['insert', 'update'],
-  //     nullable: true,
-  //   },
-  // )
-  // commentaire: CommentaireEntity[];
-
-  // @OneToMany(
-  //   (type) => FavorisEntity,
-  //   (FavorisEntity) => FavorisEntity.users, {
-  //   cascade: ['insert', 'update'],
-  //   nullable: true,
-  // })
-  // favoris: FavorisEntity[];
-
-  // @OneToMany(
-  //   (type) => LikesEntity,
-  //   (LikesEntity) => LikesEntity.subjectForum, {
-  //   cascade: ['insert', 'update'],
-  //   nullable: true,
-  // })
-  // likes: LikesEntity[];
-
-
-  // @OneToMany(
-  //   (type) => SuggestionEntity,
-  //   (SuggestionEntity) => SuggestionEntity.users,
-  //   {
-  //     cascade: ['insert', 'update'],
-  //     nullable: true,
-  //   },
-  // )
-  // suggestions: SuggestionEntity[];
-
-  // @OneToMany((type) => SignaleEntity, (SignaleEntity) => SignaleEntity.users, {
-  //   cascade: ['insert', 'update'],
-  //   nullable: true,
-  // })
-  // signale: SignaleEntity[];
+  @OneToMany(
+    (type) => ServiceEntity,
+    (ser) => ser.users,
+    {
+      cascade: ['insert', 'update'],
+      nullable: true,
+    },
+  )
+  services: ServiceEntity[];
 
 }

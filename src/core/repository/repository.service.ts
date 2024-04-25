@@ -2,7 +2,9 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaiementEntity } from 'src/shared/entities/paiement.entity';
 import { ReservationEntity } from 'src/shared/entities/reservation.entity';
+import { ReservationServiceEntity } from 'src/shared/entities/reservation.service.entity';
 import { RoomEntity } from 'src/shared/entities/room.entity';
+import { ServiceEntity } from 'src/shared/entities/service.entity';
 import { TarifEntity } from 'src/shared/entities/tarif.entity';
 import { UserEntity } from 'src/shared/entities/user.entity';
 import { PrivilegesEnum } from 'src/shared/enums/privilege.enum';
@@ -23,6 +25,11 @@ export class RepositoryService {
     public ReservationEntityRepository: Repository<ReservationEntity>,
     @InjectRepository(PaiementEntity)
     public PaiementEntityRepository: Repository<PaiementEntity>,
+    @InjectRepository(ServiceEntity)
+    public ServicesEntityRepository: Repository<ServiceEntity>,
+    @InjectRepository(ReservationServiceEntity)
+    public ResServEntityRepository: Repository<ReservationServiceEntity>,
+
 
   ) { }
 

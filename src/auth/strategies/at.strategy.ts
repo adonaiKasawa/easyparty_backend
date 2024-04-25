@@ -30,7 +30,7 @@ export class AtStrategy extends PassportStrategy(Strategy, 'jwt') {
   }
 
   validate(payload: PayloadUserInterface) {
-    console.log(payload);
+    // console.log(payload);
     if (payload.privilege_user === PrivilegesEnum.PSF) {
       if (payload) {
         // const find = this.abonnementService.findOneByEgliseId(

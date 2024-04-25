@@ -9,19 +9,19 @@ export class RoomEntity extends TimesTampInterface {
   @Column()
   name: string;
 
-  @Column()
+  @Column({nullable: true})
   description: string;
 
   @Column()
   capacity: number
 
-  @Column()
+  @Column({nullable: true,})
   location: string;
 
-  @Column()
+  @Column({nullable: true,})
   adress: string;
 
-  @Column()
+  @Column({nullable: true,})
   city: string;
 
   @Column({ nullable: true })
@@ -33,7 +33,7 @@ export class RoomEntity extends TimesTampInterface {
   @Column('simple-array', { nullable: true })
   additional_services: string[];
 
-  @Column('simple-array')
+  @Column('simple-array', {nullable: true,})
   visuals: string[];
 
   @ManyToOne(

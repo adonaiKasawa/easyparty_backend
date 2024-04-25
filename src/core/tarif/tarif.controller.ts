@@ -4,9 +4,10 @@ import { CreateTarifDto, UpdateTarifDto } from 'src/shared/dto/tarif.dto';
 import { PayloadUserInterface } from 'src/shared/payload/payload.user.interface';
 import { User } from 'src/auth/user/user.decorators';
 import { JwtAuthGuard } from 'src/auth/guard/jwt.auth.guard';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Tarif')
+@ApiBearerAuth()
 @Controller('tarif')
 export class TarifController {
   constructor(private readonly tarifService: TarifService) { }

@@ -52,7 +52,7 @@ export class RoomsService {
   }
 
   async getRoomById(id: number): Promise<RoomEntity> {
-    const room = await this.repository.RoomEntityRepository.findOneBy({ id });
+    const room = await this.repository.RoomEntityRepository.findOne({ where: { id }, relations: ['tarif'] });
     if (!room) {
       throw new NotFoundException('Room not found');
     }

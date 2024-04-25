@@ -8,23 +8,27 @@ export class CreateRoomDto {
   name: string;
 
   @ApiProperty()
+  @IsOptional()
   @IsString()
   description: string;
 
   @ApiProperty()
-  @IsNumber()
   @Type(() => Number)
+  @IsNumber()
   capacity: number;
 
   @ApiProperty()
+  @IsOptional()
   @IsString()
   location: string;
 
   @ApiProperty()
+  @IsOptional()
   @IsString()
   adress: string;
 
   @ApiProperty()
+  @IsOptional()
   @IsString()
   city: string;
 

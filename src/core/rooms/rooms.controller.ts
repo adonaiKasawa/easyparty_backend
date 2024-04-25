@@ -1,30 +1,32 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Put, UseInterceptors, UploadedFiles, UseGuards, NotFoundException, Query, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Put, UseInterceptors, UploadedFiles, UseGuards, NotFoundException, Query, ParseIntPipe, Res, StreamableFile } from '@nestjs/common';
 import { RoomsService } from './rooms.service';
 import { CreateRoomDto, UpdateRoomDto } from 'src/shared/dto/room.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { RoomEntity } from 'src/shared/entities/room.entity';
 import { randomUUID } from 'crypto';
 import { diskStorage } from 'multer';
-import Path = require('path');
+import { join, parse } from 'path';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { PayloadUserInterface } from 'src/shared/payload/payload.user.interface';
 import { User } from 'src/auth/user/user.decorators';
 import { JwtAuthGuard } from 'src/auth/guard/jwt.auth.guard';
 import { RepositoryService } from '../repository/repository.service';
 import { ApiConfig } from 'src/configs/api.config';
+import { createReadStream } from 'fs';
 
 export const storage = (folders: string) => ({
   storage: diskStorage({
     destination: `src/uploads/${folders}`,
     filename: (req, file: Express.Multer.File, cb) => {
       const filename: string = `easyparty-${folders}-` + randomUUID();
-      const extension: string = Path.parse(file.originalname).ext;
+      const extension: string = parse(file.originalname).ext;
       cb(null, `${filename}${extension}`);
     },
   }),
 });
 
 @ApiTags('Rooms')
+@ApiBearerAuth()
 @Controller('rooms')
 export class RoomsController {
   constructor(
@@ -46,6 +48,22 @@ export class RoomsController {
       return await this.roomsService.createRoom(roomDto, filesName, user);
     }
   }
+
+  @Get('picture/:filename')
+  getFile(
+    @Res() res: any,
+    @Param('filename') filename: string,
+  ) {
+    try {
+      const file = createReadStream(join(process.cwd(), `src/uploads/rooms/${filename}`));
+      file.pipe(res);
+    // return new StreamableFile(file);
+    } catch (error) {
+      // console.log(error);
+      throw new NotFoundException(error.message)
+    }
+  }
+
 
   @UseGuards(JwtAuthGuard)
   @Post("assignTarif/:roomId/:tarifId/")

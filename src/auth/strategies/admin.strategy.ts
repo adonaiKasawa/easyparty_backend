@@ -47,7 +47,7 @@ export class AdminStrategy extends PassportStrategy(Strategy, 'jwt-admin') {
         return new UnauthorizedException('admin');
       }
     } else {
-      console.log(payload);
+      // console.log(payload);
       return new UnauthorizedException("l'admin n'est pas correct");
     }
   }

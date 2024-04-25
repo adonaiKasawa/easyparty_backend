@@ -1,10 +1,15 @@
 
 export interface PayloadUserInterface {
   sub: number;
-  nom_user: string;
-  prenom_user: string;
-  telephone_user: string;
+  name: string;
+  prenom: string;
+  telephone: string;
   email: string;
-  username_user: string;
+  username: null;
   privilege_user: string;
+  ville: string;
+  pays: string;
+  adresse: string;
+  iat: number;
+  exp: number;
 }

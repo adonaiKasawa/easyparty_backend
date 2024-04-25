@@ -33,7 +33,7 @@ export class AuthService {
     }
   }
 
-  async signUp(user: CreateUserDto): Promise<any> {
+  async signUp(user: CreateUserDto): Promise<Tokens> {
     const userCreated = await this.createUser(user);
     const userEglise = await this.Reposiroty.UserEntityRepository.findOne({ where: { id: userCreated.id } });
 
@@ -55,7 +55,7 @@ export class AuthService {
     return tokens;
   }
 
-  async signIn(dto: authDTO): Promise<any> {
+  async signIn(dto: authDTO): Promise<Tokens> {
     
     const user = await this.Reposiroty.UserEntityRepository.findOne({ where: { telephone: dto.telephone } });
 
@@ -73,7 +73,7 @@ export class AuthService {
       user.privilege,
     );
     await this.updateRtHash(user.id, tokens.refresh_token);
-    return { user, tokens };
+    return tokens
   }
 
 
@@ -112,7 +112,7 @@ export class AuthService {
 
   async getTokens(
     id: number,
-    nom: string,
+    name: string,
     prenom: string,
     telephone: string,
     email: string,
@@ -126,7 +126,7 @@ export class AuthService {
       this.jwtService.signAsync(
         {
           sub: id,
-          nom,
+          name,
           prenom,
           telephone,
           email,
@@ -144,7 +144,7 @@ export class AuthService {
       this.jwtService.signAsync(
         {
           sub: id,
-          nom,
+          name,
           prenom,
           telephone,
           email,
@@ -204,7 +204,6 @@ export class AuthService {
     }
   }
 
-
   async findUserByTel(telephone: string): Promise<UserEntity> {
     try {
       return await this.Reposiroty.UserEntityRepository.findOneByOrFail({ telephone });
@@ -219,6 +218,12 @@ export class AuthService {
     } catch (error) {
       throw new NotFoundException();
     }
+  }
+
+  async findAllUserByPrivilege(privilege: PrivilegesEnum): Promise<UserEntity[]>{
+    return await this.Reposiroty.UserEntityRepository.find({
+      where: {privilege}
+    })
   }
 
   async updateUser(updateUserDto: UpdateUserDto, id: number): Promise<Tokens> {
