@@ -17,8 +17,8 @@ export class ReservationEntity extends TimesTampInterface {
   @Column()
   number_person: number;
 
-  @Column()
-  status: string
+  @Column({default: "payment_confim"})
+  niveau_reservation: string
 
   @ManyToOne(
     (type) => RoomEntity,

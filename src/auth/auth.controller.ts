@@ -5,6 +5,7 @@ import {
   HttpStatus,
   Param,
   ParseIntPipe,
+  Patch,
   Request,
   UseGuards,
 } from '@nestjs/common';
@@ -14,8 +15,10 @@ import { AuthService } from './auth.service';
 import { Tokens } from './types';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { authDTO, authUserDTO } from 'src/shared/dto/auth.dto';
-import { CreateUserDto } from 'src/shared/dto/user.dto';
+import { CreateUserDto, UpdateUserDto } from 'src/shared/dto/user.dto';
 import { PrivilegesEnum } from 'src/shared/enums/privilege.enum';
+import { User } from './user/user.decorators';
+import { PayloadUserInterface } from 'src/shared/payload/payload.user.interface';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -26,23 +29,38 @@ export class AuthController {
 
   @Post('/signin')
   async signIn(@Body() auth: authDTO) {
-    return this.authservice.signIn(auth);
+    return await this.authservice.signIn(auth);
   }
 
   @Post('/signup')
   async signUp(@Body() signupDTO: CreateUserDto) {
-    return this.authservice.signUp(signupDTO);
+    return await this.authservice.signUp(signupDTO);
   }
 
   @Get('/findUserByPrivilege/:type')
   async findAllUserByPrivilege(
     @Param('type') type: PrivilegesEnum
   ) {
-    return this.authservice.findAllUserByPrivilege(type);
+    return await this.authservice.findAllUserByPrivilege(type);
   }
 
+  @Get('/findUserById/:id')
+  async findByUserId(
+    @Param('id', ParseIntPipe) id: number
+  ) {
+    return await this.authservice.findUserById(id);
+  }
 
-
+  @UseGuards(AuthGuard('jwt'))
+  @Patch(`/:id`)
+  @HttpCode(HttpStatus.OK)
+  async update(
+    @Body() dto: UpdateUserDto,
+    @Param("id", ParseIntPipe) id: number,
+    @User() user: PayloadUserInterface
+  ) {
+    return await this.authservice.updateUser(dto, id);
+  }
 
   @UseGuards(AuthGuard('jwt'))
   @Post('logout')

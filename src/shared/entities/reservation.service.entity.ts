@@ -20,7 +20,8 @@ export class ReservationServiceEntity extends TimesTampInterface {
     (type) => ServiceEntity,
     (u) => u.res_serv,
     {
-      cascade: ["insert", "update", "remove"]
+      cascade: ["insert", "update", "remove"],
+      eager: true
     }
   )
   service: ServiceEntity

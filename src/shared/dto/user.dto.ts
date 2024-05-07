@@ -1,5 +1,5 @@
 import { ApiProperty, PartialType } from "@nestjs/swagger";
-import { IsString, IsOptional, IsNotEmpty, IsPhoneNumber, IsEnum, IsEmail } from "class-validator";
+import { IsString, IsOptional, IsNotEmpty, IsPhoneNumber, IsEnum, IsEmail, IsBoolean } from "class-validator";
 import { IsPasswordValid } from "./isvalidpassword.dto";
 import { Type } from "class-transformer";
 import { PrivilegesEnum } from "../enums/privilege.enum";
@@ -65,6 +65,12 @@ export class CreateUserDto {
   @IsNotEmpty()
   @IsEnum(PrivilegesEnum)
   privilege: PrivilegesEnum.CLT;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsBoolean()
+  confirm: boolean;
+
 }
 
 

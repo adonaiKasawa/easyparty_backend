@@ -29,8 +29,6 @@ export class RepositoryService {
     public ServicesEntityRepository: Repository<ServiceEntity>,
     @InjectRepository(ReservationServiceEntity)
     public ResServEntityRepository: Repository<ReservationServiceEntity>,
-
-
   ) { }
 
   checkPrivileges(user: PayloadUserInterface) {

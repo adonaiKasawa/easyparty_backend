@@ -45,6 +45,7 @@ export class AuthService {
       userCreated.email,
       userCreated.username,
       userCreated.privilege,
+      userCreated.confirm,
       userEglise.ville,
       userEglise.pays,
       userEglise.adresse,
@@ -56,24 +57,34 @@ export class AuthService {
   }
 
   async signIn(dto: authDTO): Promise<Tokens> {
-    
-    const user = await this.Reposiroty.UserEntityRepository.findOne({ where: { telephone: dto.telephone } });
 
-    if (!user) throw new ForbiddenException('Identifiants incorrects');
-    if (user.status !== 'actif')
-      throw new ForbiddenException('Votre compte est bloquer');
+    try {
+      const user = await this.Reposiroty.UserEntityRepository.findOne({ where: { telephone: dto.telephone } });
+      console.log(user);
 
-    const tokens = await this.getTokens(
-      user.id,
-      user.nom,
-      user.prenom,
-      user.telephone,
-      user.email,
-      user.username,
-      user.privilege,
-    );
-    await this.updateRtHash(user.id, tokens.refresh_token);
-    return tokens
+      if (!user) throw new ForbiddenException('Identifiants incorrects');
+      if (!user.confirm)
+        throw new ForbiddenException("Votre compte n'est pas confirmer");
+      if (!(await bcrypt.compare(dto.password, user.password)))
+        throw new UnauthorizedException('Identifiants incorrects');
+      const tokens = await this.getTokens(
+        user.id,
+        user.nom,
+        user.prenom,
+        user.telephone,
+        user.email,
+        user.username,
+        user.privilege,
+        user.confirm
+      );
+      await this.updateRtHash(user.id, tokens.refresh_token);
+      return tokens
+    } catch (error) {
+      console.log(error);
+      
+      throw new NotFoundException(error.message);
+
+    }
   }
 
 
@@ -100,6 +111,7 @@ export class AuthService {
       user.email,
       user.username,
       user.privilege,
+      user.confirm
     );
     await this.updateRtHash(user.id, tokens.refresh_token);
     return tokens;
@@ -118,9 +130,11 @@ export class AuthService {
     email: string,
     username: string,
     privilege: string,
+    confirm: boolean,
     ville?: string,
     pays?: string,
     adresse?: string,
+
   ): Promise<Tokens> {
     const [at, rt] = await Promise.all([
       this.jwtService.signAsync(
@@ -132,6 +146,7 @@ export class AuthService {
           email,
           username,
           privilege_user: privilege,
+          confirm,
           ville,
           pays,
           adresse,
@@ -150,6 +165,7 @@ export class AuthService {
           email,
           username,
           privilege_user: privilege,
+          confirm,
           ville,
           pays,
           adresse,
@@ -220,9 +236,9 @@ export class AuthService {
     }
   }
 
-  async findAllUserByPrivilege(privilege: PrivilegesEnum): Promise<UserEntity[]>{
+  async findAllUserByPrivilege(privilege: PrivilegesEnum): Promise<UserEntity[]> {
     return await this.Reposiroty.UserEntityRepository.find({
-      where: {privilege}
+      where: { privilege }
     })
   }
 
@@ -231,7 +247,7 @@ export class AuthService {
       id,
       ...updateUserDto,
     });
-    
+
     if (updateUserDto.password) {
       update.password = await bcrypt.hash(updateUserDto.password, update.salt);
     }
@@ -265,6 +281,7 @@ export class AuthService {
         user.email,
         user.username,
         user.privilege,
+        user.confirm,
         user.ville,
         user.pays,
         user.adresse,
@@ -290,5 +307,7 @@ export class AuthService {
     }
     return chaine;
   }
+
+
 
 }

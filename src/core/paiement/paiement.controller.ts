@@ -25,12 +25,13 @@ export class PaiementController {
   ) {
     return this.paiementService.findByOwnerId(id);
   }
+
   
-  @Get('/:id')
+  @Get('/reservation/:id')
   findByUserId(
     @Param('id', ParseIntPipe) id: number,
   ) {
-    return this.paiementService.findByUserId(id);
+    return this.paiementService.findByReservationId(id);
   }
 
 

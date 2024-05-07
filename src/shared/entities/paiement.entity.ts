@@ -26,7 +26,7 @@ export class PaiementEntity extends TimesTampInterface {
     {
       cascade: ['insert', 'update'],
       nullable: true,
-      eager: true
+      // eager: true
     }
   )
   reservation: ReservationEntity;

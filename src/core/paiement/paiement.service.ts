@@ -3,6 +3,7 @@ import { CreatePaiementDto, PaiementDto, UpdatePaiementDto } from 'src/shared/dt
 import { RepositoryService } from '../repository/repository.service';
 import { PaiementEntity } from 'src/shared/entities/paiement.entity';
 import { ReservationService } from '../reservation/reservation.service';
+import { ReservationStatusEnum } from 'src/shared/enums/reservation.enum';
 
 @Injectable()
 export class PaiementService {
@@ -13,13 +14,13 @@ export class PaiementService {
 
   async create(id: number, createPaiementDto: PaiementDto): Promise<PaiementEntity> {
     try {
-      const create = this.repository.PaiementEntityRepository.create(createPaiementDto.paeiment)
-      create.reservation = await this.repository.ReservationEntityRepository.findOne({ where: { id } });
-      // const update = await this.reservationService.update(id, createPaiementDto.reservation);
+      const create = this.repository.PaiementEntityRepository.create(createPaiementDto.paeiment);
+      const reservation = await this.repository.ReservationEntityRepository.findOne({ where: { id } });
+      create.reservation = reservation;
       return await this.repository.PaiementEntityRepository.save(create);
     } catch (error) {
       console.log(error);
-      throw new NotFoundException('Une ereur se produit lors de la validation du payement')
+      throw new NotFoundException(error.message)
     }
   }
 
@@ -40,18 +41,31 @@ export class PaiementService {
 
   findByOwnerId(id: number) {
     try {
-      return this.repository.PaiementEntityRepository.find({
+      return this.repository.ReservationEntityRepository.find({
         where: {
-          reservation: {
-            rooms: { user: {id} }
-          }
+          niveau_reservation: ReservationStatusEnum.PC
         },
-        relations: ["reservation", "reservation.user"]
-      })
+        relations: ["paiement", "user",  'rooms', 'rooms.tarif']
+      });
     } catch (error) {
       throw new NotFoundException()
     }
   }
+
+  findByReservationId(id: number) {
+    try {
+      return this.repository.ReservationEntityRepository.findOne({
+        where: {
+           id ,
+          niveau_reservation: ReservationStatusEnum.PC,
+        },
+        relations: ["paiement", "user",]
+      });
+    } catch (error) {
+      throw new NotFoundException()
+    }
+  }
+
 
   findOne(id: number) {
     return `This action returns a #${id} paiement`;

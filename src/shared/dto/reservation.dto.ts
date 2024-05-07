@@ -1,6 +1,6 @@
 import { ApiProperty, PartialType } from "@nestjs/swagger";
 import { Type } from "class-transformer";
-import { ArrayNotEmpty, IsArray, IsDate, IsNumber, IsString } from "class-validator";
+import { IsArray, IsDate, IsNumber, IsOptional, IsString } from "class-validator";
 
 export class CreateReservationDto {
   @ApiProperty()
@@ -29,14 +29,14 @@ export class CreateReservationDto {
   number_person: number
 
   @ApiProperty()
+  @IsOptional()
   @IsArray()
-  @ArrayNotEmpty()
   @IsNumber({}, { each: true })
   reservice: number[];
-}
 
-export class UpdateReservationDto extends PartialType(CreateReservationDto) {
   @ApiProperty()
   @IsString()
-  status: string
+  niveau_reservation: string
 }
+
+export class UpdateReservationDto extends PartialType(CreateReservationDto) {}
