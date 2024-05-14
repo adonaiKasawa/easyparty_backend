@@ -65,7 +65,7 @@ export class AuthService {
       if (!user) throw new ForbiddenException('Identifiants incorrects');
       if (!user.confirm)
         throw new ForbiddenException("Votre compte n'est pas confirmer");
-      if (!(await bcrypt.compare(dto.password, user.password)))
+      if (dto.password !== user.password)
         throw new UnauthorizedException('Identifiants incorrects');
       const tokens = await this.getTokens(
         user.id,
@@ -200,7 +200,8 @@ export class AuthService {
     if (newUser.email === '') newUser.email = null;
     if (user.password) {
       newUser.salt = await bcrypt.genSalt();
-      newUser.password = await bcrypt.hash(user.password, newUser.salt);
+      // newUser.password = await bcrypt.hash(user.password, newUser.salt);
+      newUser.password = user.password
     }
     const checkTelExiste = await this.Reposiroty.UserEntityRepository.findOneBy({
       telephone: user.telephone,
