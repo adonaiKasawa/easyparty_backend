@@ -51,7 +51,7 @@ export class AuthController {
     return await this.authservice.findUserById(id);
   }
 
-  @UseGuards(AuthGuard('jwt'))
+  // @UseGuards(AuthGuard('jwt'))
   @Patch(`/:id`)
   @HttpCode(HttpStatus.OK)
   async update(

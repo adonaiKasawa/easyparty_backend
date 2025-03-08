@@ -65,8 +65,14 @@ export class AuthService {
       if (!user) throw new ForbiddenException('Identifiants incorrects');
       if (!user.confirm)
         throw new ForbiddenException("Votre compte n'est pas confirmer");
-      if (dto.password !== user.password)
+     
+      const compare = await bcrypt.compare(dto.password, user.password);
+      console.log(compare);
+      
+      if (!compare)
         throw new UnauthorizedException('Identifiants incorrects');
+        // if (dto.password, user.password)
+
       const tokens = await this.getTokens(
         user.id,
         user.nom,
@@ -80,8 +86,8 @@ export class AuthService {
       await this.updateRtHash(user.id, tokens.refresh_token);
       return tokens
     } catch (error) {
-      console.log(error);
-      
+      // console.log(error);
+
       throw new NotFoundException(error.message);
 
     }
@@ -273,6 +279,8 @@ export class AuthService {
 
     try {
       const save = await this.Reposiroty.UserEntityRepository.save(update);
+      console.log(save);
+      
       const user = await this.Reposiroty.UserEntityRepository.findOne({ where: { id: save.id }, });
       const tokens = await this.getTokens(
         user.id,
